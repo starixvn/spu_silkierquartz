@@ -76,12 +76,23 @@ namespace SilkierQuartz.Controllers
                 JobsCount = jobKeys?.Count ?? 0,
                 TriggerCount = triggerKeys?.Count ?? 0,
                 ExecutingJobs = currentlyExecutingJobs.Count,
-                ExecutedJobs = executedJobs,
+                ExecutedJobs = FormatNumber(executedJobs),
                 FailedJobs = failedJobs?.ToString(CultureInfo.InvariantCulture) ?? "N / A",
                 JobGroups = pausedJobGroups,
                 TriggerGroups = pausedTriggerGroups,
                 HistoryEnabled = histStore != null,
             });
+        }
+
+        static string FormatNumber(int num)
+        {
+            if (num >= 100000)
+                return FormatNumber(num / 1000) + "K";
+            if (num >= 10000)
+            {
+                return (num / 1000D).ToString("0.#") + "K";
+            }
+            return num.ToString("#,0");
         }
 
         async Task<IEnumerable<object>> GetGroupPauseState(IEnumerable<string> groups, Func<string, Task<bool>> func)
